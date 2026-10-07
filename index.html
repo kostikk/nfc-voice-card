@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111111">
+  <title>Голосовая открытка</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="card">
+    <div class="glow"></div>
+
+    <div class="icon">♡</div>
+
+    <p class="eyebrow">ГОЛОСОВАЯ ОТКРЫТКА</p>
+    <h1 id="title">Для тебя ❤️</h1>
+    <p id="subtitle">У тебя есть личное голосовое послание.</p>
+
+    <button id="playButton" class="play-button" aria-label="Послушать послание">
+      <span id="playIcon">▶</span>
+      <span id="buttonText">Послушать</span>
+    </button>
+
+    <div class="wave" id="wave" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+
+    <p id="status" class="status">Нажми кнопку, чтобы услышать послание</p>
+
+    <audio id="audio" preload="metadata">
+      <source src="voice.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="message" id="message">
+      <span>💌</span>
+      <p>Спасибо, что открыл(а) эту открытку.</p>
+    </div>
+
+    <footer>Открой через NFC • 3D NKS</footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
