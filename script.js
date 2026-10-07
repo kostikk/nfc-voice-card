@@ -1,12 +1,10 @@
 // ================================
-// НАСТРОЙКИ ОТКРЫТКИ
+// ГОЛОСОВАЯ ОТКРЫТКА
 // ================================
 const config = {
   title: "Для тебя ❤️",
   subtitle: "У тебя есть личное голосовое послание.",
   message: "Спасибо, что открыл(а) эту открытку.",
-  // Текст используется только как запасной вариант,
-  // если voice.mp3 ещё не добавлен.
   fallbackText: "Привет! Это твоё личное голосовое послание. Спасибо, что открыл эту открытку."
 };
 
@@ -22,6 +20,19 @@ const buttonText = document.getElementById("buttonText");
 const status = document.getElementById("status");
 const wave = document.getElementById("wave");
 
+// ========================================
+// ОТДЕЛЬНЫЕ ЗАКАЗЫ
+// Без ?id=... используется старый voice.mp3.
+// Например: ?id=001 → audio/001.mp3
+// ========================================
+const params = new URLSearchParams(window.location.search);
+const orderId = params.get("id");
+
+if (orderId && /^[a-zA-Z0-9_-]+$/.test(orderId)) {
+  audio.src = `audio/${orderId}.mp3`;
+  audio.load();
+}
+
 let usingSpeech = false;
 
 function setPlaying(isPlaying) {
@@ -32,7 +43,7 @@ function setPlaying(isPlaying) {
 
 function speakFallback() {
   if (!("speechSynthesis" in window)) {
-    status.textContent = "Добавь файл voice.mp3 в репозиторий.";
+    status.textContent = "Не удалось загрузить голосовое послание.";
     return;
   }
 
@@ -65,25 +76,13 @@ function speakFallback() {
 }
 
 button.addEventListener("click", async () => {
-  // Если voice.mp3 доступен — используем его.
-  if (audio.readyState > 0 && !audio.error) {
-    try {
-      if (audio.paused) {
-        await audio.play();
-        setPlaying(true);
-        status.textContent = "Воспроизводится голосовое послание…";
-      } else {
-        audio.pause();
-        setPlaying(false);
-        status.textContent = "Послание на паузе";
-      }
-      return;
-    } catch (e) {
-      // Если браузер не смог проиграть файл, используем запасной голос.
-    }
+  try {
+    await audio.play();
+    setPlaying(true);
+    status.textContent = "Воспроизводится голосовое послание…";
+  } catch (e) {
+    speakFallback();
   }
-
-  speakFallback();
 });
 
 audio.addEventListener("ended", () => {
@@ -92,5 +91,8 @@ audio.addEventListener("ended", () => {
 });
 
 audio.addEventListener("pause", () => {
-  if (!audio.ended && !usingSpeech) setPlaying(false);
+  if (!audio.ended && !usingSpeech) {
+    setPlaying(false);
+    status.textContent = "Послание на паузе";
+  }
 });
